@@ -3,6 +3,7 @@
 from sprites import *
 import csv
 import sys
+import time
 
 font_name = pg.font.match_font('arial')
 def draw_text(surface, text, size, x, y, color):
@@ -68,18 +69,24 @@ class Game:
                     self.player = Player(self, int((SCREEN_WIDTH/TILESIZE - N_TILES) / 2) + col, int((SCREEN_HEIGHT/TILESIZE - N_TILES) / 2), TILESIZE)
                     self.all_sprites.add(self.player)
                 if tile == 'w':
-                    wall = Wall(self, int((SCREEN_WIDTH/TILESIZE - N_TILES) / 2) + col, int((SCREEN_HEIGHT/TILESIZE - N_TILES) / 2) + row, TILESIZE)
+                    wall = Wall(self, int((SCREEN_WIDTH/TILESIZE - N_TILES) / 2) + col, int((SCREEN_HEIGHT/TILESIZE - N_TILES) / 2) + row, TILESIZE, LIGHTGREY)
                     self.all_sprites.add(wall)
                     self.walls.add(wall)
 
     def run(self):
         # Bucle del juego
         self.playing = True
+        self.load_solution()
         while self.playing:
             self.clock.tick(FPS)
-            self.events()
+            self.events()                
             self.update()
-            self.draw()
+            self.draw() 
+            if self.instructions:
+                self.draw_solution()
+                time.sleep(0.5)
+            
+            
 
     def quit(self):
         # Saliendo del juego
@@ -195,6 +202,46 @@ class Game:
             draw_text(self.screen, "Maze Solver", 80, SCREEN_WIDTH / 2, 80, GREEN)
 
             pg.display.flip()
+
+
+    def load_solution(self):
+        self.xnow = self.player.x 
+        self.ynow = self.player.y
+        self.instructions = list()
+        with open(os.path.join(os.path.dirname(__file__), "instructions.txt"), 'rt') as f:
+            line = f.readline()
+            self.instructions = line.split()
+
+    def draw_solution(self):        
+        c = YELLOW
+        if len(self.instructions) == 1:
+            c = RED
+        # Agregar un nuevo bloque a all_sprites
+        sol = self.instructions.pop(0)
+        
+        if sol == 'D':
+            wall = Wall(self, self.xnow, self.ynow + 1, TILESIZE, c)
+            self.all_sprites.add(wall)
+            self.walls.add(wall)
+            self.ynow += 1
+        
+        if sol == 'U':
+            wall = Wall(self, self.xnow, self.ynow - 1, TILESIZE, c)
+            self.all_sprites.add(wall)
+            self.walls.add(wall)
+            self.ynow -= 1
+        
+        if sol == 'R':
+            wall = Wall(self, self.xnow + 1, self.ynow, TILESIZE, c)
+            self.all_sprites.add(wall)
+            self.walls.add(wall)
+            self.xnow += 1
+        
+        if sol == 'L':
+            wall = Wall(self, self.xnow - 1, self.ynow, TILESIZE, c)
+            self.all_sprites.add(wall)
+            self.walls.add(wall)
+            self.xnow -= 1
 
     def show_go_screen(self):
         pass
