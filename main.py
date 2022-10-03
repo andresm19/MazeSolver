@@ -84,7 +84,7 @@ class Game:
             self.draw() 
             if self.instructions:
                 self.draw_solution()
-                time.sleep(0.5)
+                time.sleep(0.1)
             
             
 
