@@ -4,6 +4,7 @@ from sprites import *
 import csv
 import sys
 import time
+from search_algorithms import *
 
 font_name = pg.font.match_font('arial')
 def draw_text(surface, text, size, x, y, color):
@@ -76,15 +77,21 @@ class Game:
     def run(self):
         # Bucle del juego
         self.playing = True
+        self.searching = True
+        self.load_search()
         self.load_solution()
         while self.playing:
             self.clock.tick(FPS)
             self.events()                
             self.update()
-            self.draw() 
-            if self.instructions:
-                self.draw_solution()
+            self.draw()
+            if self.search_coor:
+                self.draw_search()
                 time.sleep(0.1)
+            else:
+                if self.instructions:
+                    self.draw_solution()
+                    time.sleep(0.1)
             
             
 
@@ -211,6 +218,20 @@ class Game:
         with open(os.path.join(os.path.dirname(__file__), "instructions.txt"), 'rt') as f:
             line = f.readline()
             self.instructions = line.split()
+
+    def load_search(self):
+        self.search_coor = coor_list
+    
+    def draw_search(self):
+        c = BLUE
+        if len(self.search_coor) == 1:
+            c = WHITE
+        # Agregar un nuevo bloque a all_sprites
+        cur = self.search_coor.pop(0)
+        
+        wall = Wall(self, cur[0] + 3, cur[1] + 2, TILESIZE, c)
+        self.all_sprites.add(wall)
+        self.walls.add(wall)
 
     def draw_solution(self):        
         c = YELLOW

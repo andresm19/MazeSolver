@@ -15,7 +15,6 @@ def dfs_search():
     """
     Procedimiento
     """
-    create_txt_search()
     create_txt_instructions()
 
 def bfs_search():
@@ -23,7 +22,6 @@ def bfs_search():
     """
     Procedimiento
     """
-    create_txt_search()
     create_txt_instructions()
 
 def iter_deep_search():
@@ -31,7 +29,6 @@ def iter_deep_search():
     """
     Procedimiento
     """
-    create_txt_search()
     create_txt_instructions()
 
 def uniform_cost_search():
@@ -39,7 +36,6 @@ def uniform_cost_search():
     """
     Procedimiento
     """
-    create_txt_search()
     create_txt_instructions()
 
 def greedy_search():
@@ -47,7 +43,6 @@ def greedy_search():
     """
     Procedimiento
     """
-    create_txt_search()
     create_txt_instructions()
 
 def a_star_search():
@@ -55,6 +50,7 @@ def a_star_search():
     """
     Procedimiento
     """
-    create_txt_search()
     create_txt_instructions()
 
+
+coor_list = [(1, 1), (1, 2), (1, 3), (1, 2), (2, 2), (3, 2), (3, 3), (3, 4)]
