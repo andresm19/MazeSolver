@@ -80,14 +80,15 @@ class Game:
         self.searching = True
         self.load_search()
         self.load_solution()
+        
         while self.playing:
             self.clock.tick(FPS)
             self.events()                
             self.update()
             self.draw()
-            if self.search_coor:
+            if self.search_coor and (N_TILES == 5 or N_TILES == 10):
                 self.draw_search()
-                time.sleep(0.1)
+                time.sleep(0.07)
             else:
                 if self.instructions:
                     self.draw_solution()
@@ -217,10 +218,17 @@ class Game:
         self.instructions = list()
         with open(os.path.join(os.path.dirname(__file__), "instructions.txt"), 'rt') as f:
             line = f.readline()
+            if N_TILES != 5:
+                line = f.readline()
+                if N_TILES != 10:
+                    line = f.readline()
             self.instructions = line.split()
 
     def load_search(self):
-        self.search_coor = coor_list
+        if N_TILES == 5:
+            self.search_coor = coor_list
+        else:
+            self.search_coor = coor_list2
     
     def draw_search(self):
         c = BLUE
@@ -229,7 +237,19 @@ class Game:
         # Agregar un nuevo bloque a all_sprites
         cur = self.search_coor.pop(0)
         
-        wall = Wall(self, cur[0] + 3, cur[1] + 2, TILESIZE, c)
+        dx = 0
+        dy = 0
+        if N_TILES == 5:
+            dx = 3
+            dy = 2
+        elif N_TILES == 10:
+            dx = 6
+            dy = 4
+        else:
+            dx = 28
+            dy = 20
+
+        wall = Wall(self, cur[0] + dx, cur[1] + dy, TILESIZE, c)
         self.all_sprites.add(wall)
         self.walls.add(wall)
 

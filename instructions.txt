@@ -1,1 +1,6 @@
-D D R R D D 
+D D R R D D
+D D L D L D D R R R U R R D R D D D R D
+D R D D D R R R R D D D D R R R D D R D R R U R U U R R R D R D R R D R R R R R R U U R R R R R R R U R R R U U R U U R R D D D D D R R D D D D D D D R D D D D D D R R R D R R R D D R D D D D D D D D L D D R D D D  D D L D D D D D D D D R D
+D R D D D R R R R D D D D R R R D D R D R R U R U U R R R D R D R R D R R R R R R
+1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 
+                  10                  20                  30                  40                   50                 60                  70                  80                  90                  10
