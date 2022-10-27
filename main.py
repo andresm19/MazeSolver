@@ -4,7 +4,7 @@ from sprites import *
 import csv
 import sys
 import time
-from search_algorithms import *
+import search_algorithms
 
 font_name = pg.font.match_font('arial')
 def draw_text(surface, text, size, x, y, color):
@@ -18,6 +18,7 @@ def draw_text(surface, text, size, x, y, color):
 N_TILES = 5
 csv_name = ''
 maze = ""
+v = 0.1
 
 class Button:
     def __init__(self, game, text, x, y, color, size, t_size):
@@ -61,10 +62,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
 
-        print(int((SCREEN_WIDTH/TILESIZE - N_TILES) / 2))
-
         for row, tiles in enumerate(self.map_data):
-            print(tiles)
             for col, tile in enumerate(tiles):
                 if tile == 'c' and row == 0:
                     self.player = Player(self, int((SCREEN_WIDTH/TILESIZE - N_TILES) / 2) + col, int((SCREEN_HEIGHT/TILESIZE - N_TILES) / 2), TILESIZE)
@@ -78,7 +76,6 @@ class Game:
         # Bucle del juego
         self.playing = True
         self.searching = True
-        self.load_search()
         self.load_solution()
         
         while self.playing:
@@ -86,13 +83,20 @@ class Game:
             self.events()                
             self.update()
             self.draw()
-            if self.search_coor and (N_TILES == 5 or N_TILES == 10):
+            if self.search_coor:
                 self.draw_search()
-                time.sleep(0.07)
+                if N_TILES < 50:
+                    time.sleep(0.06)
+                else:
+                    time.sleep(0.01)
+                    
             else:
                 if self.instructions:
                     self.draw_solution()
-                    time.sleep(0.1)
+                    if N_TILES < 50:
+                        time.sleep(0.06)
+                    else:
+                        time.sleep(0.01)
             
             
 
@@ -182,6 +186,7 @@ class Game:
                         global N_TILES
                         N_TILES = 10
                         csv_name = 'maze_10x10.csv'
+                        v = 0.08
                         maze = csv_name[:-4].replace("_", " ").replace("m", "M")
                         self.showing_menu = False
 
@@ -189,6 +194,7 @@ class Game:
                         TILESIZE = 10
                         N_TILES = 50
                         csv_name = 'maze_50x50.csv'
+                        v = 0.05
                         maze = csv_name[:-4].replace("_", " ").replace("m", "M")
                         self.showing_menu = False
 
@@ -196,6 +202,7 @@ class Game:
                         TILESIZE = 5
                         N_TILES = 100
                         csv_name = 'maze_100x100.csv'
+                        v = 0.03
                         maze = csv_name[:-4].replace("_", " ").replace("m", "M")
                         self.showing_menu = False
 
@@ -203,6 +210,7 @@ class Game:
                         TILESIZE = 2
                         N_TILES = 400
                         csv_name = 'maze_400x400.csv'
+                        v = 0.02
                         maze = ""
                         self.showing_menu = False
 
@@ -216,19 +224,8 @@ class Game:
         self.xnow = self.player.x 
         self.ynow = self.player.y
         self.instructions = list()
-        with open(os.path.join(os.path.dirname(__file__), "instructions.txt"), 'rt') as f:
-            line = f.readline()
-            if N_TILES != 5:
-                line = f.readline()
-                if N_TILES != 10:
-                    line = f.readline()
-            self.instructions = line.split()
 
-    def load_search(self):
-        if N_TILES == 5:
-            self.search_coor = coor_list
-        else:
-            self.search_coor = coor_list2
+        self.search_coor, self.instructions = search_algorithms.solve(csv_name)        
     
     def draw_search(self):
         c = BLUE
@@ -245,9 +242,15 @@ class Game:
         elif N_TILES == 10:
             dx = 6
             dy = 4
-        else:
-            dx = 28
+        elif N_TILES == 50:
+            dx = 30
             dy = 20
+        elif N_TILES == 100:
+            dx = 60
+            dy = 40
+        else:
+            dx = 75
+            dy = 25
 
         wall = Wall(self, cur[0] + dx, cur[1] + dy, TILESIZE, c)
         self.all_sprites.add(wall)
