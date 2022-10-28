@@ -22,7 +22,6 @@ def DFS(map_data, start, end):
         if not found:
             stack.pop()
     else:
-        print("Encontrado!!!")
         found = True
 
 

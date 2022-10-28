@@ -87,16 +87,12 @@ class Game:
                 self.draw_search()
                 if N_TILES < 50:
                     time.sleep(0.06)
-                else:
-                    time.sleep(0.01)
                     
             else:
                 if self.instructions:
                     self.draw_solution()
                     if N_TILES < 50:
                         time.sleep(0.06)
-                    else:
-                        time.sleep(0.01)
             
             
 
@@ -225,7 +221,7 @@ class Game:
         self.ynow = self.player.y
         self.instructions = list()
 
-        self.search_coor, self.instructions = search_algorithms.solve(csv_name)        
+        self.search_coor, self.instructions = search_algorithms.solve(csv_name, 'bfs')        
     
     def draw_search(self):
         c = BLUE
