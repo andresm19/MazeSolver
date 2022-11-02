@@ -3,6 +3,7 @@ import os
 import csv
 import DFS
 import BFS
+import ITERATIVE
 from searching import *
 
 coor_list = []
@@ -18,11 +19,12 @@ def dfs_search(map_data, start, end):
 def bfs_search(map_data, start, end):
     BFS.BFS(map_data, start, end)
 
-def iter_deep_search():
-    """
-    Procedimiento
-    """
-    create_txt_instructions()
+def iter_deep_search(map_data, start, end, depth):
+    ITERATIVE.instructions = []
+    ITERATIVE.coor_list = []
+    ITERATIVE.found = False
+    ITERATIVE.stack = Stack()
+    ITERATIVE.ITERATIVE(map_data, start, end, depth)
 
 def uniform_cost_search():
     """
@@ -53,14 +55,22 @@ def read_csv(file_name):
                     map_data.append(row)
     return map_data
 
-def solve(file_name, mode):
+def solve(file_name, mode, depth=0):
     map_data = read_csv(file_name)
     NUMBER_TILES = len(map_data)
     start = (0, map_data[0].index("c"))
     end = (NUMBER_TILES-1, map_data[NUMBER_TILES-1].index("c"))
     global coor_list
 
-    if mode == 'dfs':
+    if mode == 'iter':
+        iter_deep_search(map_data[:], start, end, depth)
+
+        coor_list = ITERATIVE.coor_list[1:]      
+        ITERATIVE.update_instructions()
+        
+        return [t[::-1] for t in coor_list], ITERATIVE.instructions
+    
+    elif mode == 'dfs':
         dfs_search(map_data[:], start, end)
         coor_list = DFS.coor_list[1:]
             

@@ -61,6 +61,7 @@ class Game:
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
+        self.steps = pg.sprite.Group()
 
         for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
@@ -76,23 +77,51 @@ class Game:
         # Bucle del juego
         self.playing = True
         self.searching = True
-        self.load_solution()
-        
+        self.mode = 'iter'
+        self.solved = False
+        self.search_coor = []
+        self.end = (self.map_data[N_TILES-1].index("c"), N_TILES-1)
+        d = -2
+        dif = 3
+        if N_TILES == 50:
+            dif = 16
+        elif N_TILES == 100:
+            dif = 26
+        elif N_TILES == 400:
+            dif = 40
+
+        if self.mode != 'iter':
+            self.load_solution(self.mode)
+            self.solved = True
+
         while self.playing:
             self.clock.tick(FPS)
             self.events()                
             self.update()
             self.draw()
+
             if self.search_coor:
                 self.draw_search()
                 if N_TILES < 50:
                     time.sleep(0.06)
-                    
-            else:
+                elif N_TILES == 50:
+                    time.sleep(0.03)
+
+            elif self.mode == 'iter' and not self.solved:
+                for step in self.steps:
+                    step.kill()
+                d += dif
+                self.load_solution(self.mode, d)
+                if self.search_coor[-1] == self.end:
+                    self.solved = True
+
+            elif self.solved == True:
                 if self.instructions:
                     self.draw_solution()
                     if N_TILES < 50:
                         time.sleep(0.06)
+                    elif N_TILES == 50:
+                        time.sleep(0.03)
             
             
 
@@ -216,16 +245,20 @@ class Game:
             pg.display.flip()
 
 
-    def load_solution(self):
+    def load_solution(self, mode, depth=0):
         self.xnow = self.player.x 
         self.ynow = self.player.y
         self.instructions = list()
 
-        self.search_coor, self.instructions = search_algorithms.solve(csv_name, 'bfs')        
+        if mode == 'iter':
+            self.search_coor, self.instructions = search_algorithms.solve(csv_name, mode, depth)        
+        else:
+            self.search_coor, self.instructions = search_algorithms.solve(csv_name, mode)
+       
     
     def draw_search(self):
         c = BLUE
-        if len(self.search_coor) == 1:
+        if len(self.search_coor) == 1 and self.search_coor[0] == self.end:
             c = WHITE
         # Agregar un nuevo bloque a all_sprites
         cur = self.search_coor.pop(0)
@@ -250,7 +283,7 @@ class Game:
 
         wall = Wall(self, cur[0] + dx, cur[1] + dy, TILESIZE, c)
         self.all_sprites.add(wall)
-        self.walls.add(wall)
+        self.steps.add(wall)
 
     def draw_solution(self):        
         c = YELLOW
