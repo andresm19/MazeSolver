@@ -71,6 +71,10 @@ def solve(file_name, mode, depth=0):
         return [t[::-1] for t in coor_list], ITERATIVE.instructions
     
     elif mode == 'dfs':
+        DFS.instructions = []
+        DFS.coor_list = []
+        DFS.stack = Stack()
+        DFS.found = False
         dfs_search(map_data[:], start, end)
         coor_list = DFS.coor_list[1:]
             
@@ -79,6 +83,12 @@ def solve(file_name, mode, depth=0):
         return [t[::-1] for t in coor_list], DFS.instructions
     
     else:
+        BFS.instructions = []
+        BFS.coor_list = []
+        BFS.queue = Queue()
+        BFS.found = False
+        BFS.n_buscados = []
+        
         bfs_search(map_data[:], start, end)
         coor_list = BFS.coor_list[1:]
 

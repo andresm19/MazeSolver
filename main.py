@@ -18,7 +18,6 @@ def draw_text(surface, text, size, x, y, color):
 N_TILES = 5
 csv_name = ''
 maze = ""
-v = 0.1
 
 class Button:
     def __init__(self, game, text, x, y, color, size, t_size):
@@ -49,6 +48,7 @@ class Game:
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         self.running = True
+        self.buttons = []
 
     def load_data(self):
         self.map_data = list()
@@ -77,11 +77,15 @@ class Game:
         # Bucle del juego
         self.playing = True
         self.searching = True
-        self.mode = 'iter'
+        self.mode = 'bfs'
         self.solved = False
         self.search_coor = []
         self.end = (self.map_data[N_TILES-1].index("c"), N_TILES-1)
-        d = -2
+
+        button1 = Button(self, "BACK", SCREEN_WIDTH*0.95, SCREEN_HEIGHT*0.9, RED, (100, 50), 25)
+        self.buttons.append(button1)
+
+        depth_iter = -2
         dif = 3
         if N_TILES == 50:
             dif = 16
@@ -110,8 +114,8 @@ class Game:
             elif self.mode == 'iter' and not self.solved:
                 for step in self.steps:
                     step.kill()
-                d += dif
-                self.load_solution(self.mode, d)
+                depth_iter += dif
+                self.load_solution(self.mode, depth_iter)
                 if self.search_coor[-1] == self.end:
                     self.solved = True
 
@@ -134,13 +138,12 @@ class Game:
         self.all_sprites.update()
 
     def draw_grid(self):
-        if N_TILES != 500:
-            # Lineas verticales
-            for i in range(int(TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2),  int(SCREEN_WIDTH-TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2 + 1), TILESIZE):
-                pg.draw.line(self.screen, LIGHTGREY, (i, TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2), (i, SCREEN_HEIGHT-TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2))
-            # Lineas horizontales
-            for j in range(int(TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2), int(SCREEN_HEIGHT - TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2 + 1), TILESIZE):
-                pg.draw.line(self.screen, LIGHTGREY, (TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2, j), (SCREEN_WIDTH-TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2, j))
+        # Lineas verticales
+        for i in range(int(TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2),  int(SCREEN_WIDTH-TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2 + 1), TILESIZE):
+            pg.draw.line(self.screen, LIGHTGREY, (i, TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2), (i, SCREEN_HEIGHT-TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2))
+        # Lineas horizontales
+        for j in range(int(TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2), int(SCREEN_HEIGHT - TILESIZE*(SCREEN_HEIGHT/TILESIZE - N_TILES) / 2 + 1), TILESIZE):
+            pg.draw.line(self.screen, LIGHTGREY, (TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2, j), (SCREEN_WIDTH-TILESIZE*(SCREEN_WIDTH/TILESIZE - N_TILES) / 2, j))
 
 
     def draw(self):
@@ -148,6 +151,7 @@ class Game:
         self.screen.fill(GREY)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
+        self.draw_buttons()
         draw_text(self.screen, maze, 50, SCREEN_WIDTH / 2, 80, WHITE)
         # Actualizamos los cambios
         pg.display.flip()
@@ -168,6 +172,18 @@ class Game:
                     self.player.move(dx=0,dy=-1)
                 if event.key == pg.K_DOWN:
                     self.player.move(dx=0,dy=1)
+            
+            if event.type == pg.MOUSEBUTTONDOWN:
+                mpos = pg.mouse.get_pos()
+                if self.buttons[0].rect.collidepoint(mpos):
+                    self.all_sprites.remove()
+                    self.buttons = []
+                    self.show_start_screen()
+                    self.load_data()
+                    while self.running:
+                        self.new()
+                        self.run()
+                        self.show_go_screen()
 
     def draw_buttons(self):
         for button in self.buttons:
@@ -175,8 +191,8 @@ class Game:
             button.show_text()
 
     def show_start_screen(self):
+        global TILESIZE, csv_name, maze, N_TILES
         self.showing_menu = True
-        self.buttons = []
         button1 = Button(self, "Maze 5x5", SCREEN_WIDTH / 2, SCREEN_HEIGHT*0.4, BLUE, (400, 60), 25)
         self.buttons.append(button1)
         button2 = Button(self, "Maze 10x10", SCREEN_WIDTH / 2, SCREEN_HEIGHT*0.5, BLUE, (400, 60), 25)
@@ -187,10 +203,11 @@ class Game:
         self.buttons.append(button4)
         button5 = Button(self, "Maze 400x400", SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.8, BLUE, (400, 60), 25)
         self.buttons.append(button5)
+        button6 = Button(self, "EXIT", SCREEN_WIDTH * 0.9, SCREEN_HEIGHT * 0.9, RED, (100, 50), 25)
+        self.buttons.append(button6)
         while self.showing_menu:
             self.clock.tick(FPS)
             self.screen.fill(BLACK)
-
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
@@ -198,17 +215,14 @@ class Game:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mpos = pg.mouse.get_pos()
                     if button1.rect.collidepoint(mpos):
-                        global TILESIZE
+                        N_TILES = 5
                         TILESIZE = 100
-                        global csv_name
                         csv_name = 'maze_5x5.csv'
-                        global maze
                         maze = csv_name[:-4].replace("_", " ").replace("m", "M")
                         self.showing_menu = False
 
                     elif button2.rect.collidepoint(mpos):
                         TILESIZE = 50
-                        global N_TILES
                         N_TILES = 10
                         csv_name = 'maze_10x10.csv'
                         v = 0.08
@@ -238,17 +252,25 @@ class Game:
                         v = 0.02
                         maze = ""
                         self.showing_menu = False
+                    
+                    elif button6.rect.collidepoint(mpos):
+                        self.showing_menu = False
+                        pg.quit()
+                        sys.exit()
+
 
             self.draw_buttons()
             draw_text(self.screen, "Maze Solver", 80, SCREEN_WIDTH / 2, 80, GREEN)
 
             pg.display.flip()
+        self.buttons = []
 
 
     def load_solution(self, mode, depth=0):
         self.xnow = self.player.x 
         self.ynow = self.player.y
         self.instructions = list()
+        self.search_coor = []
 
         if mode == 'iter':
             self.search_coor, self.instructions = search_algorithms.solve(csv_name, mode, depth)        
