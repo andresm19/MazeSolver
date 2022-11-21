@@ -1,10 +1,6 @@
 
-import os
-import csv
-import DFS
-import BFS
-import ITERATIVE
-import UCS
+import os, csv
+import csv, DFS, BFS, ITERATIVE, UCS, GREEDY
 from searching import *
 
 coor_list = []
@@ -32,11 +28,12 @@ def uniform_cost_search(map_data, start, end):
     UCS.pq = UCS.PriorityQueue()
     UCS.UCS(map_data, start, end)
 
-def greedy_search():
-    """
-    Procedimiento
-    """
-    create_txt_instructions()
+def greedy_search(map_data, start, end):
+    GREEDY.found = False
+    GREEDY.instructions = []
+    GREEDY.coor_list = []
+    GREEDY.stack = Stack()
+    GREEDY.GREEDY(map_data, start, end)
 
 def a_star_search():
     """
@@ -102,7 +99,7 @@ def solve(file_name, mode, depth=0):
 
         return [t[::-1] for t in coor_list2[1:]], BFS.instructions
 
-    else:
+    elif mode == 'ucs':
         uniform_cost_search(map_data[:], start, end)
         coor_list = UCS.coor_list[1:]
 
@@ -110,6 +107,14 @@ def solve(file_name, mode, depth=0):
         UCS.update_instructions(map_data[:])
 
         return [t[::-1] for t in coor_list[1:]], UCS.instructions
+
+    else:
+        greedy_search(map_data[:], start, end)
+        coor_list = GREEDY.coor_list
+
+        GREEDY.update_instructions()
+
+        return [t[::-1] for t in coor_list[1:]], GREEDY.instructions
 
 
 

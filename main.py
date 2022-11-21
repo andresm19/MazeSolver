@@ -85,7 +85,7 @@ class Game:
         # Bucle del juego
         self.playing = True
         self.searching = True
-        self.mode = 'ucs'
+        self.mode = 'greedy'
         self.solved = False
         self.search_coor = []
         self.end = (self.map_data[N_TILES-1].index("c"), N_TILES-1)
