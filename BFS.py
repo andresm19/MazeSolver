@@ -1,5 +1,4 @@
 from searching import *
-from math import log as logaritmo
 
 instructions = []
 coor_list = []
@@ -44,8 +43,8 @@ def update_instructions(map_data):
     cur = coor_list2[-1]
 
     for h in range(coor_list2.index(cur) - 1, -1, -1):
-        d = availables(coor_list2[h], map_data, mode='bfs')
-        if cur in d:
+        avs = availables(coor_list2[h], map_data, mode='bfs')
+        if cur in avs:
             coor_list.append(coor_list2[h])
             cur = coor_list2[h]
     

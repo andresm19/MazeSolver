@@ -56,6 +56,74 @@ class Queue():
             act = act.next
         print()
 
+
+class PriorityQueue():
+    def __init__(self):
+        self.max_size = 200
+        self.size = 0
+        self.array = [None] * self.max_size
+    
+    def parent(self, i):
+        return int(i/2)
+    
+    def left_child(self, i):
+        return i*2 + 1
+
+    def right_child(self, i):
+        return i*2 + 2
+
+    def sift_up(self, i):
+        while i > 0 and self.array[self.parent(i)][1] < self.array[i][1]:
+            aux = self.array[self.parent(i)]
+            self.array[self.parent(i)] = self.array[i]
+            self.array[i] = aux
+            i = self.parent(i)
+    
+    def sift_down(self, i):
+        max_ind = i
+        
+        l = self.left_child(i)
+        if l < self.size:
+            if self.array[l][1] > self.array[max_ind][1]:
+                max_ind = l
+        
+        r = self.right_child(i)
+        if r < self.size:
+            if self.array[r][1] > self.array[max_ind][1]:
+                max_ind = r
+
+        if i != max_ind:
+            aux = self.array[i]
+            self.array[i] = self.array[max_ind]
+            self.array[max_ind] = aux
+            self.sift_down(max_ind)
+
+    def insert(self, n):
+        if self.size == self.max_size:
+            print("ERROR!!!")
+            return "Error"
+
+        self.array[self.size] = n
+        self.sift_up(self.size)
+        self.size += 1
+
+    def extract_max(self):
+        n = self.array[0]
+        self.array[0] = self.array[self.size-1]
+        self.array[self.size-1] = None
+        self.size -= 1
+
+        if self.size > 0:
+            self.sift_down(0)
+
+        return n
+
+    def get_max(self):
+        return self.array[0]
+
+
+
+
 def availables(point, map_data, mode='dfs'):
     
     n_tiles = len(map_data)

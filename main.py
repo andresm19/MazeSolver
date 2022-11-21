@@ -50,6 +50,14 @@ class Game:
         self.running = True
         self.buttons = []
 
+    def start(self):
+        self.show_start_screen()
+        self.load_data()
+        while self.running:
+            self.new()
+            self.run()
+            self.show_go_screen()
+
     def load_data(self):
         self.map_data = list()
         with open(os.path.join(os.path.dirname(__file__), csv_name), 'rt') as f:
@@ -77,7 +85,7 @@ class Game:
         # Bucle del juego
         self.playing = True
         self.searching = True
-        self.mode = 'bfs'
+        self.mode = 'ucs'
         self.solved = False
         self.search_coor = []
         self.end = (self.map_data[N_TILES-1].index("c"), N_TILES-1)
@@ -178,12 +186,7 @@ class Game:
                 if self.buttons[0].rect.collidepoint(mpos):
                     self.all_sprites.remove()
                     self.buttons = []
-                    self.show_start_screen()
-                    self.load_data()
-                    while self.running:
-                        self.new()
-                        self.run()
-                        self.show_go_screen()
+                    self.start()
 
     def draw_buttons(self):
         for button in self.buttons:
@@ -343,10 +346,6 @@ class Game:
 
 
 g = Game()
-g.show_start_screen()
-g.load_data()
-while g.running:
-    g.new()
-    g.run()
-    g.show_go_screen()
+g.start()
+
 
