@@ -6,8 +6,6 @@ from search.searching import *
 coor_list = []
 
 # Todas las funciones para buscar el camino correcto
-def create_txt_instructions():
-    pass
 
 def dfs_search(map_data, start, end):
     DFS.DFS(map_data, start, end)

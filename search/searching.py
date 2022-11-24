@@ -153,6 +153,16 @@ def availables(point, map_data, mode='dfs'):
             else:
                 list_av.append((point[0], point[1] + 1))
     
+                
+    # Left
+    if point[0] - 1 >= 0:
+        if map_data[point[0] - 1][point[1]] == 'c':
+            if mode == 'bfs':
+                list_av[3] = (point[0] - 1, point[1])
+            else:
+                list_av.append((point[0] - 1, point[1]))
+    
+                
     # Right
     if point[0] + 1 < n_tiles:
         if map_data[point[0] + 1][point[1]] == 'c':
@@ -160,7 +170,8 @@ def availables(point, map_data, mode='dfs'):
                 list_av[1] = (point[0] + 1, point[1])
             else:
                 list_av.append((point[0] + 1, point[1]))
-    
+
+                
     # Up
     if point[1] - 1 >= 0:
         if map_data[point[0]][point[1] - 1] == 'c':
@@ -169,13 +180,7 @@ def availables(point, map_data, mode='dfs'):
             else:
                 list_av.append((point[0], point[1] - 1))
     
-    # Left
-    if point[0] - 1 >= 0:
-        if map_data[point[0] - 1][point[1]] == 'c':
-            if mode == 'bfs':
-                list_av[3] = (point[0] - 1, point[1])
-            else:
-                list_av.append((point[0] - 1, point[1]))
+    
 
     return list_av
 

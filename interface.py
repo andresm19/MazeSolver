@@ -342,8 +342,11 @@ class Game:
     def show_go_screen(self):
         global TILESIZE, csv_name, maze, N_TILES
         self.showing_menu = True
-        button1 = Button(self, "DFS", SCREEN_WIDTH / 2, SCREEN_HEIGHT*0.43, BLUE, (400, 60), 25)
-        self.buttons.append(button1)
+        dfs = False
+        if csv_name != 'maze_400x400.csv':
+            button1 = Button(self, "DFS", SCREEN_WIDTH / 2, SCREEN_HEIGHT*0.43, BLUE, (400, 60), 25)
+            self.buttons.append(button1)
+            dfs = True
         button2 = Button(self, "BFS", SCREEN_WIDTH / 2, SCREEN_HEIGHT*0.53, BLUE, (400, 60), 25)
         self.buttons.append(button2)
         button3 = Button(self, "ITERATIVE", SCREEN_WIDTH / 2, SCREEN_HEIGHT*0.63, BLUE, (400, 60), 25)
@@ -365,11 +368,12 @@ class Game:
                     sys.exit()
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mpos = pg.mouse.get_pos()
-                    if button1.rect.collidepoint(mpos):
-                        self.mode = 'dfs'
-                        self.showing_menu = False
+                    if dfs:
+                        if button1.rect.collidepoint(mpos):
+                            self.mode = 'dfs'
+                            self.showing_menu = False
 
-                    elif button2.rect.collidepoint(mpos):
+                    if button2.rect.collidepoint(mpos):
                         self.mode = 'bfs'
                         self.showing_menu = False
 
